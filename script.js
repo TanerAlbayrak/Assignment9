@@ -10,7 +10,7 @@ GUI I Assignment 9: Scrabble game
 
 var tilesLeft = 100;
 //this array represents the scrabble board and the positions of each character
-var scrabble_slots_array = new Array(15);
+var scrabble_slots_array = new Array(11);
 //Word Score
 var score = 0;
 //round score
@@ -18,30 +18,21 @@ var tempScore = 0;
 
 var dictionary = {};
 
-//On user submit check word is valid
+//check if word is in this dictionary
+//credit given to Jason Downing in a great post in Piazza https://piazza.com/class/icm9jynacvn5kx?cid=43
 function submit(event)
 {
-    console.log("Submit Successful: " + $("#word").text());
-
-    //check if the word is in the dictionary file
-    if(!dictionary[$("#word").text().toLowerCase()] == true)
-    {
-        alert("Word is not in dict");
-    }
-    else
-    {
         var numberTilesRemoved = 0;
-        //carry score over from last round
         score += tempScore;
 
-        //clear tiles from board
+        //clears tiles
         for(var i = 0; i < scrabble_slots_array.length; i++)
         {
             if(scrabble_slots_array[i] != undefined && scrabble_slots_array[i].length > 0)
             {
                 $("#" + scrabble_slots_array[i]).remove();
                 scrabble_slots_array[i] = "";
-                //count how many tiles were removed
+                //how many tiles were removed
                 numberTilesRemoved++;
             }
         }
@@ -106,7 +97,6 @@ function updateScore()
 }
 function tileDropped(event, ui)
 {
-    console.log("tile: " + ui.draggable.attr("id") + " dropped");
 
     //snap tile into position
     ui.draggable.position(
