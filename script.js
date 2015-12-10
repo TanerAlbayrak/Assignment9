@@ -1,6 +1,6 @@
 var tilesLeft = 100;
 //this array represents the scrabble board and the positions of each character
-var scrabble_slots_array = new Array(15);
+var scrabble_slots_array = new Array(11);
 //Word Score
 var score = 0;
 //round score
