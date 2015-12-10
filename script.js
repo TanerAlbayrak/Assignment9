@@ -162,7 +162,7 @@ function generateTiles(numberTiles)
 
         //parse the filename for just the one letter character
         var char = tile.substring(14, 15);
-        $("#tile_rack").append("<img src=Img/" + tile + " alt=" + char + " class='tile' id=" + char + tilesLeft +" />");
+        $("#tile_rack").append("<img src=images/" + tile + " alt=" + char + " class='tile' id=" + char + tilesLeft +" />");
     }
 }
 
