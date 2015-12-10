@@ -1,3 +1,99 @@
+var tilesLeft = 100;
+//this array represents the scrabble board and the positions of each character
+var scrabble_slots_array = new Array(15);
+//Word Score
+var score = 0;
+//round score
+var tempScore = 0;
+
+var dictionary = {};
+
+//On user submit check word is valid
+function submit(event)
+{
+    console.log("Submit Successful: " + $("#word").text());
+
+    //check if the word is in the dictionary file
+    if(!dictionary[$("#word").text().toLowerCase()] == true)
+    {
+        alert("Word is not in dict");
+    }
+    else
+    {
+        var numberTilesRemoved = 0;
+        //carry score over from last round
+        score += tempScore;
+
+        //clear tiles from board
+        for(var i = 0; i < scrabble_slots_array.length; i++)
+        {
+            if(scrabble_slots_array[i] != undefined && scrabble_slots_array[i].length > 0)
+            {
+                $("#" + scrabble_slots_array[i]).remove();
+                scrabble_slots_array[i] = "";
+                //count how many tiles were removed
+                numberTilesRemoved++;
+            }
+        }
+
+        console.log("Adding " + numberTilesRemoved + " tiles");
+        //generate enough tiles to bring the count back to seven
+        generateTiles(numberTilesRemoved);
+        $("#word").text("");
+        $(".tile" ).draggable();
+    }
+}
+
+//Method called after scrabble board changes
+//Updates the UI after changes are made to the board
+function updateScrabbleWord()
+{
+    var newText = "";
+
+    //go through all the characters currently on the board and build a new string with them
+    for (var i = 0; i < scrabble_slots_array.length; i++)
+    {
+        if (scrabble_slots_array[i] != undefined && scrabble_slots_array[i].length > 0)
+            newText += $("#" + scrabble_slots_array[i]).attr("alt");
+    }
+
+    //replace hold string with updated one
+    $("#word").text(newText);
+}
+function updateScore()
+{
+    //reset score
+    tempScore = 0;
+    var doubleWord = false;
+
+    //go through each filled slot on the board
+    for (i = 0; i < scrabble_slots_array.length; i++)
+    {
+        if (scrabble_slots_array[i] != undefined && scrabble_slots_array[i].length > 0)
+            //for each filled slot find its value and add it to score
+            for (x = 0; x < scrabbleTiles.length; x++)
+            {
+                if (scrabbleTiles[x].char == $("#" + scrabble_slots_array[i]).attr("alt"))
+                    //double letter score
+                    if(i == 6 || i == 8 || i == 21 || i == 23)
+                        tempScore += scrabbleTiles[x].value*2;
+                    //double word score
+                    else if(i == 2 || i == 12 || i == 17 || i == 27)
+                    {
+                        tempScore += scrabbleTiles[x].value;
+                        doubleWord = true;
+                    }
+                    else
+                        tempScore += scrabbleTiles[x].value;
+            }
+    }
+
+    if(doubleWord == true)
+        tempScore *= 2;
+
+    //update the score
+    $("#score").text(tempScore + score);
+}
 function tileDropped(event, ui)
 {
     console.log("tile: " + ui.draggable.attr("id") + " dropped");
