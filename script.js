@@ -70,7 +70,7 @@ function updateScore()
 {
     //reset score
     roundScore = 0;
-    var doubleWord = false;
+    var tripleWord = false;
 
     //go through each filled slot on the board
     for (i = 0; i < scrabble_slots_array.length; i++)
@@ -83,19 +83,19 @@ function updateScore()
                     //double letter score
                     if(i == 6 || i == 8 || i == 21 || i == 23)
                         roundScore += scrabbleTiles[x].value*2;
-                    //double word score
+                    //triple word score
                     else if(i == 2 || i == 12 || i == 17 || i == 27)
                     {
                         roundScore += scrabbleTiles[x].value;
-                        doubleWord = true;
+                        tripleWord = true;
                     }
                     else
                         roundScore += scrabbleTiles[x].value;
             }
     }
 
-    if(doubleWord == true)
-        roundScore *= 2;
+    if(tripleWord == true)
+        roundScore *= 3;
 
     //update the score
     $("#score").text(roundScore + score);
