@@ -7,21 +7,21 @@ GUI I Assignment 9: Scrabble game
 //https://teaching.cs.uml.edu/~heines/91.461/91.461-2015-16f/461-assn/Scrabble_Pieces_AssociativeArray_Jesse.js
 //possible way to store all the tiles, associative array, credit given to Professor Heines.
 
-
 var tilesLeft = 100;
-//this array represents the scrabble board and the positions of each character
+// positions of each letter on board
 var scrabble_slots_array = new Array(11);
 //Word Score
 var score = 0;
-//round score
-var tempScore = 0;
 
-var dictionary = {};
+var roundScore = 0;
 
 //check if word is in this dictionary
 //credit given to Jason Downing in a great post in Piazza https://piazza.com/class/icm9jynacvn5kx?cid=43
+//http://ejohn.org/blog/dictionary-lookups-in-javascript/  - posted March 15, 2011
 function submit(event)
 {
+         var dictionary = {};
+         
          if(!dictionary[$("#word").text().toLowerCase()] == true)
     {
         alert("Word is not in dict");
@@ -29,7 +29,7 @@ function submit(event)
     else
     {
         var numberTilesRemoved = 0;
-        score += tempScore;
+        score += roundScore;
 
         //clears tiles
         for(var i = 0; i < scrabble_slots_array.length; i++)
@@ -43,7 +43,6 @@ function submit(event)
             }
         }
 
-        console.log("Adding " + numberTilesRemoved + " tiles");
         //generate enough tiles to bring the count back to seven
         generateTiles(numberTilesRemoved);
         $("#word").text("");
@@ -70,7 +69,7 @@ function updateScrabbleWord()
 function updateScore()
 {
     //reset score
-    tempScore = 0;
+    roundScore = 0;
     var doubleWord = false;
 
     //go through each filled slot on the board
@@ -83,23 +82,23 @@ function updateScore()
                 if (scrabbleTiles[x].char == $("#" + scrabble_slots_array[i]).attr("alt"))
                     //double letter score
                     if(i == 6 || i == 8 || i == 21 || i == 23)
-                        tempScore += scrabbleTiles[x].value*2;
+                        roundScore += scrabbleTiles[x].value*2;
                     //double word score
                     else if(i == 2 || i == 12 || i == 17 || i == 27)
                     {
-                        tempScore += scrabbleTiles[x].value;
+                        roundScore += scrabbleTiles[x].value;
                         doubleWord = true;
                     }
                     else
-                        tempScore += scrabbleTiles[x].value;
+                        roundScore += scrabbleTiles[x].value;
             }
     }
 
     if(doubleWord == true)
-        tempScore *= 2;
+        roundScore *= 2;
 
     //update the score
-    $("#score").text(tempScore + score);
+    $("#score").text(roundScore + score);
 }
 function tileDropped(event, ui)
 {
@@ -121,7 +120,6 @@ function tileDropped(event, ui)
 
 function tileRemoved(event, ui)
 {
-    console.log("tile: " + ui.helper.attr("id") + " removed");
 
     //Make sure the tile removed is the tile that was on the slot
     if(ui.draggable.attr("id") == scrabble_slots_array[$(this).attr("id")])
