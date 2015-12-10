@@ -163,7 +163,7 @@ $(document).ready(function ()
         generateTiles(7);
 
         // Do a jQuery Ajax request for the text dictionary
-        $.get( "download/american-english.txt", function( file )
+        $.get( "dict.txt", function( file )
         {
             // Get an array of all the words
             var dict = file.split( "\n" );
