@@ -1,9 +1,13 @@
+//https://teaching.cs.uml.edu/~heines/91.461/91.461-2015-16f/461-assn/Scrabble_Pieces_AssociativeArray_Jesse.js
+//possible way to store all the tiles, associative array, credit given to Professor Heines.
+
+
 var tilesLeft = 100;
 //this array represents the scrabble board and the positions of each character
 var scrabble_slots_array = new Array(11);
-//Word Score
+//word's score
 var score = 0;
-//round score
+//round's score
 var tempScore = 0;
 
 var dictionary = {};
@@ -11,8 +15,6 @@ var dictionary = {};
 //On user submit check word is valid
 function submit(event)
 {
-    console.log("Submit Successful: " + $("#word").text());
-
     //check if the word is in the dictionary file
     if(!dictionary[$("#word").text().toLowerCase()] == true)
     {
@@ -21,7 +23,6 @@ function submit(event)
     else
     {
         var numberTilesRemoved = 0;
-        //carry score over from last round
         score += tempScore;
 
         //clear tiles from board
@@ -35,8 +36,6 @@ function submit(event)
                 numberTilesRemoved++;
             }
         }
-
-        console.log("Adding " + numberTilesRemoved + " tiles");
         //generate enough tiles to bring the count back to seven
         generateTiles(numberTilesRemoved);
         $("#word").text("");
@@ -77,24 +76,14 @@ function updateScore()
                     //double letter score
                     if(i == 6 || i == 8 || i == 21 || i == 23)
                         tempScore += scrabbleTiles[x].value*2;
-                    //double word score
-                    else if(i == 2 || i == 12 || i == 17 || i == 27)
-                    {
-                        tempScore += scrabbleTiles[x].value;
-                        doubleWord = true;
-                    }
                     else
                         tempScore += scrabbleTiles[x].value;
             }
     }
-
-    if(doubleWord == true)
-        tempScore *= 2;
-
-    //update the score
     $("#score").text(tempScore + score);
 }
-function tileDropped(event, ui)
+
+function isDropped(event, ui)
 {
     console.log("tile: " + ui.draggable.attr("id") + " dropped");
 
@@ -115,8 +104,6 @@ function tileDropped(event, ui)
 
 function tileRemoved(event, ui)
 {
-    console.log("tile: " + ui.helper.attr("id") + " removed");
-
     //Make sure the tile removed is the tile that was on the slot
     if(ui.draggable.attr("id") == scrabble_slots_array[$(this).attr("id")])
         //remove tile from board
@@ -126,16 +113,19 @@ function tileRemoved(event, ui)
     updateScrabbleWord();
 }
 
+// http://stackoverflow.com/questions/20588736/how-can-i-shuffle-the-letters-of-a-word
+// might help with randomizing letters
+
 function generateTiles(numberTiles)
 {
     //Generate seven tiles
-    for(i = 0; i < numberTiles; i++)
+    for (i = 0; i < nTiles; i++)
     {
         //randomly choose a tile from the remaining tiles (tiles left)
-        var tileNumber = Math.floor((Math.random() * tilesLeft) + 1);
-        var tile;
+        var tileNumber = Math.floor((Math.random() * tilesLeft) + 1) ;
+        var tile ;
 
-        //convert tile number to an actual tile character
+        //convert tile to character
         for (x = 0; x < scrabbleTiles.length; x++)
         {
             //When the tileNumber becomes less then zero scrabbleTiles[x].char is the character chosen
@@ -162,51 +152,38 @@ $(document).ready(function ()
     {
         generateTiles(7);
 
-        // Do a jQuery Ajax request for the text dictionary
-        $.get( "download/american-english.txt", function( file )
-        {
-            // Get an array of all the words
-            var dict = file.split( "\n" );
-
-            // And add them as properties to the dictionary lookup
-            // This will allow for fast lookups later
-            for ( var i = 0; i < dict.length; i++ )
-            {
-                dictionary[ dict[i].toLowerCase() ] = true;
-            }
-        });
-
         $("#submit_button").button().click(submit);
         $(".tile" ).draggable();
-        $(".scrabble_slots").droppable({drop: tileDropped, out: tileRemoved});
+        $(".scrabble_slots").droppable({drop: isDropped, out: tileRemoved});
     })();
 });
-//Data structure to keep track of remaining tiles
+
+// how all the letter tiles are stored
 var scrabbleTiles = [
-    {char: "A", value : 1,  remaining : 9  }
-    , {char: "B", value : 3,  remaining : 2  }
-    , {char: "C", value : 3,  remaining : 2  }
-    , {char: "D", value : 2,  remaining : 4  }
-    , {char: "E", value : 1,  remaining : 12 }
-    , {char: "F", value : 4,  remaining : 2  }
-    , {char: "G", value : 2,  remaining : 3  }
-    , {char: "H", value : 4,  remaining : 2  }
-    , {char: "I", value : 1,  remaining : 9  }
-    , {char: "J", value : 8,  remaining : 1  }
-    , {char: "K", value : 5,  remaining : 1  }
-    , {char: "L", value : 1,  remaining : 4  }
-    , {char: "M", value : 3,  remaining : 2  }
-    , {char: "N", value : 1,  remaining : 6  }
-    , {char: "O", value : 1,  remaining : 8  }
-    , {char: "P", value : 3,  remaining : 2  }
-    , {char: "Q", value : 10, remaining : 1  }
-    , {char: "R", value : 1,  remaining : 6  }
-    , {char: "S", value : 1,  remaining : 4  }
-    , {char: "T", value : 1,  remaining : 6  }
-    , {char: "U", value : 1,  remaining : 4  }
-    , {char: "V", value : 4,  remaining : 2  }
-    , {char: "W", value : 4,  remaining : 2  }
-    , {char: "X", value : 8,  remaining : 1  }
-    , {char: "Y", value : 4,  remaining : 2  }
-    , {char: "Z", value : 10, remaining : 1  }
-    , {char: "_", value : 0,  remaining : 2  }] ;
+    {char:"A", value : 1,  remaining : 9  }
+    , {char:"B", value : 3,  remaining : 2  }
+    , {char:"C", value : 3,  remaining : 2  }
+    , {char:"D", value : 2,  remaining : 4  }
+    , {char:"E", value : 1,  remaining : 12 }
+    , {char:"F", value : 4,  remaining : 2  }
+    , {char:"G", value : 2,  remaining : 3  }
+    , {char:"H", value : 4,  remaining : 2  }
+    , {char:"I", value : 1,  remaining : 9  }
+    , {char:"J", value : 8,  remaining : 1  }
+    , {char:"K", value : 5,  remaining : 1  }
+    , {char:"L", value : 1,  remaining : 4  }
+    , {char:"M", value : 3,  remaining : 2  }
+    , {char:"N", value : 1,  remaining : 6  }
+    , {char:"O", value : 1,  remaining : 8  }
+    , {char:"P", value : 3,  remaining : 2  }
+    , {char:"Q", value : 10, remaining : 1  }
+    , {char:"R", value : 1,  remaining : 6  }
+    , {char:"S", value : 1,  remaining : 4  }
+    , {char:"T", value : 1,  remaining : 6  }
+    , {char:"U", value : 1,  remaining : 4  }
+    , {char:"V", value : 4,  remaining : 2  }
+    , {char:"W", value : 4,  remaining : 2  }
+    , {char:"X", value : 8,  remaining : 1  }
+    , {char:"Y", value : 4,  remaining : 2  }
+    , {char:"Z", value : 10, remaining : 1  }
+    , {char:"_", value : 0,  remaining : 2  }] ;
