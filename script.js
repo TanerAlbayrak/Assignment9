@@ -1,158 +1,141 @@
-var ScrabbleTiles = [];
-ScrabbleTiles["A"] = {"value": 1, "original": 9, "remaining": 9};
-ScrabbleTiles["B"] = {"value": 3, "original": 2, "remaining": 2};
-ScrabbleTiles["C"] = {"value": 3, "original": 2, "remaining": 2};
-ScrabbleTiles["D"] = {"value": 2, "original": 4, "remaining": 4};
-ScrabbleTiles["E"] = {"value": 1, "original": 12, "remaining": 12};
-ScrabbleTiles["F"] = {"value": 4, "original": 2, "remaining": 2};
-ScrabbleTiles["G"] = {"value": 2, "original": 3, "remaining": 3};
-ScrabbleTiles["H"] = {"value": 4, "original": 2, "remaining": 2};
-ScrabbleTiles["I"] = {"value": 1, "original": 9, "remaining": 9};
-ScrabbleTiles["J"] = {"value": 8, "original": 1, "remaining": 1};
-ScrabbleTiles["K"] = {"value": 5, "original": 1, "remaining": 1};
-ScrabbleTiles["L"] = {"value": 1, "original": 4, "remaining": 4};
-ScrabbleTiles["M"] = {"value": 3, "original": 2, "remaining": 2};
-ScrabbleTiles["N"] = {"value": 1, "original": 6, "remaining": 6};
-ScrabbleTiles["O"] = {"value": 1, "original": 8, "remaining": 8};
-ScrabbleTiles["P"] = {"value": 3, "original": 2, "remaining": 2};
-ScrabbleTiles["Q"] = {"value": 10, "original": 1, "remaining": 1};
-ScrabbleTiles["R"] = {"value": 1, "original": 6, "remaining": 6};
-ScrabbleTiles["S"] = {"value": 1, "original": 4, "remaining": 4};
-ScrabbleTiles["T"] = {"value": 1, "original": 6, "remaining": 6};
-ScrabbleTiles["U"] = {"value": 1, "original": 4, "remaining": 4};
-ScrabbleTiles["V"] = {"value": 4, "original": 2, "remaining": 2};
-ScrabbleTiles["W"] = {"value": 4, "original": 2, "remaining": 2};
-ScrabbleTiles["X"] = {"value": 8, "original": 1, "remaining": 1};
-ScrabbleTiles["Y"] = {"value": 4, "original": 2, "remaining": 2};
-ScrabbleTiles["Z"] = {"value": 10, "original": 1, "remaining": 1};
-ScrabbleTiles["["] = {"value": 0, "original": 2, "remaining": 2};
+$(document).ready(
+        function () {
+            Deal();
+        });
 
-var theRack = [];
-var tableKeys = Object.keys(ScrabbleTiles).length;
-var rackKeys = Object.keys(theRack).length;
-var theScore = 0;
-var tileLeft = [false, false, false, false, false, false, false, false, false, false];
+//Sets up drag and drop interface on pageload
+$(document).ready(
+        function () {
+            DragAndDrop();
+        });
 
-//Function to randomize tiles
-function tileRand() {
-    return Math.floor((Math.random() * 27));
-}
 
-//Function to check if there are any tiles remaining
-function remainingTiles() {
+//global vairables
+var FirstDeal = 0; //is it the first deal? 0=yes, 1=no
+var letters = "";  //string to keep track of
+var Score = 0;  //score global
+var Droppped = 0;
 
-    var tileLeft = false;
-    var offSet = 0;
+//alphabet array and the corresponding array of values in alphabetical order
+var piecesarray = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+var valuesarray = [1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10];
 
-    while (offSet < 27) {
 
-        if (ScrabbleTiles[ String.fromCharCode(65 + offSet) ][ "remaining" ] !== 0) {
-            tileLeft = true;
+//drag and drop stuff
+function DragAndDrop() {
+    $(".draggable").draggable({
+        revert: 'invalid',
+        snap: ".droppable",
+        snapMode: "inner"
+    });
+    $(".droppable").droppable({
+        accept: ".draggable",
+        drop: function (event, ui) {
+
+            //snap to center modified from here:
+            /* http://stackoverflow.com/questions/26746823/jquery-ui-drag-and-drop-snap-to-center */
+
+            ui.draggable.position({
+                my: "center",
+                at: "center",
+                of: $(this),
+                using: function (pos) {
+                    $(this).animate(pos, 200, "linear");
+                }});
+
+            //give scoring the current letter we dropped
+            Scoring($(ui.draggable).children("img").attr("alt"), $(this).children("img").attr("alt"));
+
+            $(this).droppable('option', 'accept', ui.draggable);
+        },
+        out: function (event, ui) {
+            $(this).droppable('option', 'accept', '.draggable');
+            UnScoring($(ui.draggable).children("img").attr("alt"));
         }
-        offSet++;
-    }
 
-    return tileLeft;
-
+    });
 }
+;
 
-//Function to display tiles
-function displayTiles() {
-    for (k = 0; k < tableKeys; k++) {
-        console.log(String.fromCharCode(65 + k) + " : " + ScrabbleTiles[ String.fromCharCode(65 + k) ][ "value" ]
-                + " : " + ScrabbleTiles[ String.fromCharCode(65 + k) ][ "original" ]
-                + " : " + ScrabbleTiles[ String.fromCharCode(65 + k) ][ "remaining"]);
-    }
+
+//deals letter tiles to player
+function Deal() {
+
+    if (FirstDeal === 1)    //if its not the first deal, empty the rack before adding tiles
+        $("#rack").html("");
+
+    //generates 7 random letter tiles for rack
+    letters = "";
+    var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    //generate random chracters adapted from:
+    //http://stackoverflow.com/questions/1349404/generate-a-string-of-5-random-characters-in-javascript
+
+    for (var i = 0; i < 7; i++)
+        letters += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+
+    //deal letter tiles to the player based on the string generated above
+    for (var j = 0; j < 7; j++)
+        $("#rack").append("<div class='draggable'>"
+                + "<img src='Scrabble_Tiles/Scrabble_Tile_"
+                + letters.charAt(j)
+                + ".jpg' width=50 height=50 alt='"
+                + letters.charAt(j)
+                + "'>"
+                + "</div>");
+
+    //it is no longer the first deal
+    FirstDeal = 1;
+
+    //I dont know why but the drag and drop interface needs to be reimplented entirely after deal
+    DragAndDrop();
+
+    //resets score to zero, because we just dealt and there are no words yet
+    Score = 0;
+
+    //we have to rewrite the score on the page to zero
+    $("#score").html("<p>Score: " + Score + "<p>");
 }
+;
 
+//score the game
+function Scoring(tile, square) {
 
+    var letterscore = 0; //score of our current tile
+    
 
-//Function to set the rack up, and refresh the rack when Generate New Rack button is clicked
-function makeRack() {
-    var MAX_TILES = 7;
-    var rackCount = 1;
-    var src;
-    var id;
-    var title;
-    var tileClass = "scrabbleTile";
-
-    $('#rackDiv div').empty();
-
-    for (var i = 0; rackCount <= MAX_TILES; i++) {
-
-        var randTile = tileRand();
-
-        if (ScrabbleTiles[ String.fromCharCode(65 + randTile) ][ "remaining"] !== 0 && remainingTiles()) {
-            theRack[rackCount] = {"letter": String.fromCharCode(65 + randTile), "value": ScrabbleTiles[ String.fromCharCode(65 + randTile) ][ "value" ]};
-            ScrabbleTiles[ String.fromCharCode(65 + randTile) ][ "remaining"]--;
-            rackKeys = Object.keys(theRack).length;
-            console.log("theRack: Tile: " + (rackCount) + " Letter: " + theRack[rackCount][ "letter" ] + " Value: " + theRack[rackCount][ "value" ]);
-            id = "tile" + rackCount;
-            title = theRack[rackCount][ "letter" ];
-            src = "img/Scrabble_Tile_" + theRack[rackCount][ "letter" ] + ".jpg";
-            $('#theRack').prepend($('<img>', {id: id, src: src, class: tileClass, title: title}));
-            rackCount++;
+    for (var i = 0; i < 26; i++) {
+        if (tile === piecesarray[i]) {
+            letterscore = valuesarray[i];
         }
-        if (remainingTiles() === false) {
-            $('#tileButtonDiv').append("<p>No Tiles Left</p>");
-            $("#newTileButton").prop("disabled", true);
-            return;
+    } //find our tile score
+
+    if (square === "doubleletter")
+        letterscore = letterscore * 2;
+
+    Score += letterscore;
+
+    if (square === "tripleword")
+        Score = Score * 3;
+
+    //write the score on the page
+    $("#score").html("<p>Score: " + Score + "<p>");
+}
+;
+
+
+function UnScoring(tile){
+    
+    var letterscore = 0; //score of our current tile
+
+    for (var i = 0; i < 26; i++) {
+        if (tile === piecesarray[i]) {
+            letterscore = valuesarray[i];
         }
-        $("#" + id).draggable({snap: ".lineTile", snapMode: "inner"});
     }
-
+    
+    Score = Score - letterscore ;
+    
+    $("#score").html("<p>Score: " + Score + "<p>");
 
 }
-
-
-//Function to detect where the tile was dropped(i.e double, triple, blank)
-function tileDropped(event, ui) {
-    if (tileLeft[$(this).attr("id") - 1] === false && $(this).attr("title") === 'doubleLetter') {
-        theScore += (ScrabbleTiles[ String.fromCharCode(ui.draggable.attr("title").charCodeAt(0)) ][ "value" ] * 2);
-    }
-    else if (tileLeft[$(this).attr("id") - 1] === false && $(this).attr("title") === 'tripleLetter') {
-        theScore += (ScrabbleTiles[ String.fromCharCode(ui.draggable.attr("title").charCodeAt(0)) ][ "value" ] * 3);
-    }
-    else if (tileLeft[$(this).attr("id") - 1] === false && $(this).attr("title") === 'blank') {
-        theScore += (ScrabbleTiles[ String.fromCharCode(ui.draggable.attr("title").charCodeAt(0)) ][ "value" ]);
-    }
-    else if (tileLeft[$(this).attr("id") - 1] === false && $(this).attr("title") === 'doubleWord') {
-
-        theScore = ((theScore + ScrabbleTiles[ String.fromCharCode(ui.draggable.attr("title").charCodeAt(0)) ][ "value" ]) * 2);
-    }
-
-    tileLeft[$(this).attr("id") - 1 ] = true;
-
-    updateScore();
-}
-
-//Function to place the new score into #scoreHere
-function updateScore() {
-    $('#scoreHere').text(theScore);
-}
-
-//Function to detect where the tile was removed from
-function tileRemoved(event, ui) {
-    if (tileLeft[$(this).attr("id") - 1] === true && $(this).attr("title") === 'doubleLetter') {
-        theScore -= (ScrabbleTiles[ String.fromCharCode(ui.draggable.attr("title").charCodeAt(0)) ][ "value" ] * 2);
-    }
-    else if (tileLeft[$(this).attr("id") - 1] === true && $(this).attr("title") === 'tripleLetter') {
-        theScore -= (ScrabbleTiles[ String.fromCharCode(ui.draggable.attr("title").charCodeAt(0)) ][ "value" ] * 3);
-    }
-    else if (tileLeft[$(this).attr("id") - 1] === true && $(this).attr("title") === 'blank') {
-        theScore -= (ScrabbleTiles[ String.fromCharCode(ui.draggable.attr("title").charCodeAt(0)) ][ "value" ]);
-    }
-    else if (tileLeft[$(this).attr("id") - 1] === true && $(this).attr("title") === 'doubleWord') {
-        theScore = ((theScore / 2) - (ScrabbleTiles[ String.fromCharCode(ui.draggable.attr("title").charCodeAt(0)) ][ "value" ]));
-    }
-
-    tileLeft[$(this).attr("id") - 1 ] = false;
-
-    updateScore();
-}
-
-$(document).ready(function () {
-    makeRack();
-    $(".lineTile").droppable({drop: tileDropped, out: tileRemoved});
-
-});
