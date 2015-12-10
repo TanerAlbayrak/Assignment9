@@ -19,23 +19,57 @@ and open the template in the editor.
         
         <div id="board">
         
-            <div class="droppable">
-                <img src="images/triple_word.png" alt="tripleword">
-            </div>
-            <div class="droppable">
-                <img src="images/blank.png" alt="blank">
-            </div>
-            <div class="droppable">
-                <img src="images/double_letter.png" alt="doubleletter">
-            </div>
-            <div class="droppable">
-                <img src="images/blank.png" alt="blank">
-            </div>
-            <div class="droppable">
-                <img src="images/blank.png" alt="blank">
-            </div>
-        </div>
-            <br>
-        <br>
-    </body>
+    <img id="0" class="scrabble_slots" src="Img/blank.png">
+    <img id="1" class="scrabble_slots" src="Img/blank.png">
+    <img id="2" class="scrabble_slots" src="Img/double_word.png">
+    <img id="3" class="scrabble_slots" src="Img/blank.png">
+    <img id="4" class="scrabble_slots" src="Img/blank.png">
+    <img id="5" class="scrabble_slots" src="Img/blank.png">
+    <img id="6" class="scrabble_slots" src="Img/double_letter.png">
+    <img id="7" class="scrabble_slots" src="Img/blank.png">
+    <img id="8" class="scrabble_slots" src="Img/double_letter.png">
+    <img id="9" class="scrabble_slots" src="Img/blank.png">
+    <img id="10" class="scrabble_slots" src="Img/blank.png">
+    <img id="11" class="scrabble_slots" src="Img/blank.png">
+    <img id="12" class="scrabble_slots" src="Img/double_word.png">
+    <img id="13" class="scrabble_slots" src="Img/blank.png">
+    <img id="14" class="scrabble_slots" src="Img/blank.png">
+</div>
+<div id="scrabbleBoard2">
+    <img id="15" class="scrabble_slots" src="Img/blank.png">
+    <img id="16" class="scrabble_slots" src="Img/blank.png">
+    <img id="17" class="scrabble_slots" src="Img/double_word.png">
+    <img id="18" class="scrabble_slots" src="Img/blank.png">
+    <img id="19" class="scrabble_slots" src="Img/blank.png">
+    <img id="20" class="scrabble_slots" src="Img/blank.png">
+    <img id="21" class="scrabble_slots" src="Img/double_letter.png">
+    <img id="22" class="scrabble_slots" src="Img/blank.png">
+    <img id="23" class="scrabble_slots" src="Img/double_letter.png">
+    <img id="24" class="scrabble_slots" src="Img/blank.png">
+    <img id="25" class="scrabble_slots" src="Img/blank.png">
+    <img id="26" class="scrabble_slots" src="Img/blank.png">
+    <img id="27" class="scrabble_slots" src="Img/double_word.png">
+    <img id="28" class="scrabble_slots" src="Img/blank.png">
+    <img id="29" class="scrabble_slots" src="Img/blank.png">
+</div>
+
+<!-- tile rack is where the tiles will be generated -->
+<div id="tile_rack"></div>
+<br>
+<!-- holds word and submit action -->
+<div id="wordBox">
+    <br>
+    <label>Word:</label>
+    <label id="word"></label>
+    <br>
+    <label>Score:</label>
+    <label id="score"></label>
+    <br>
+    <button id="submit_button">Submit</button>
+</div>
+
+<!--javascript for this html file-->
+<script src="script.js"></script>
+
+</body>
 </html>
