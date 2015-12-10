@@ -7,11 +7,9 @@ GUI I Assignment 9: Scrabble game
 .tile {
 height: 100px;
 width: 100px;
-display: center;
 }
 
 #board {
-  width: 1000px;
-  height: 150px;
-  display: center;
+  width: 2000px;
+  height: 350px;
 }
