@@ -1,141 +1,116 @@
-$(document).ready(
-        function () {
-            Deal();
-        });
+function tileDropped(event, ui)
+{
+    console.log("tile: " + ui.draggable.attr("id") + " dropped");
 
-//Sets up drag and drop interface on pageload
-$(document).ready(
-        function () {
-            DragAndDrop();
-        });
-
-
-//global vairables
-var FirstDeal = 0; //is it the first deal? 0=yes, 1=no
-var letters = "";  //string to keep track of
-var Score = 0;  //score global
-var Droppped = 0;
-
-//alphabet array and the corresponding array of values in alphabetical order
-var piecesarray = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
-var valuesarray = [1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10];
-
-
-//drag and drop stuff
-function DragAndDrop() {
-    $(".draggable").draggable({
-        revert: 'invalid',
-        snap: ".droppable",
-        snapMode: "inner"
+    //snap tile into position
+    ui.draggable.position(
+    {
+        my: "center",
+        at: "center",
+        of: $(this)
     });
-    $(".droppable").droppable({
-        accept: ".draggable",
-        drop: function (event, ui) {
 
-            //snap to center modified from here:
-            /* http://stackoverflow.com/questions/26746823/jquery-ui-drag-and-drop-snap-to-center */
+    //add tile to board
+    scrabble_slots_array[$(this).attr("id")] = ui.draggable.attr("id");
 
-            ui.draggable.position({
-                my: "center",
-                at: "center",
-                of: $(this),
-                using: function (pos) {
-                    $(this).animate(pos, 200, "linear");
-                }});
+    updateScore();
+    updateScrabbleWord();
+}
 
-            //give scoring the current letter we dropped
-            Scoring($(ui.draggable).children("img").attr("alt"), $(this).children("img").attr("alt"));
+function tileRemoved(event, ui)
+{
+    console.log("tile: " + ui.helper.attr("id") + " removed");
 
-            $(this).droppable('option', 'accept', ui.draggable);
-        },
-        out: function (event, ui) {
-            $(this).droppable('option', 'accept', '.draggable');
-            UnScoring($(ui.draggable).children("img").attr("alt"));
+    //Make sure the tile removed is the tile that was on the slot
+    if(ui.draggable.attr("id") == scrabble_slots_array[$(this).attr("id")])
+        //remove tile from board
+        scrabble_slots_array[$(this).attr("id")] = "";
+
+    updateScore();
+    updateScrabbleWord();
+}
+
+function generateTiles(numberTiles)
+{
+    //Generate seven tiles
+    for(i = 0; i < numberTiles; i++)
+    {
+        //randomly choose a tile from the remaining tiles (tiles left)
+        var tileNumber = Math.floor((Math.random() * tilesLeft) + 1);
+        var tile;
+
+        //convert tile number to an actual tile character
+        for (x = 0; x < scrabbleTiles.length; x++)
+        {
+            //When the tileNumber becomes less then zero scrabbleTiles[x].char is the character chosen
+            tileNumber = tileNumber - scrabbleTiles[x].remaining;
+
+            if (tileNumber < 0)
+            {
+                scrabbleTiles[x].remaining--;
+                tilesLeft--;
+                tile = "Scrabble_Tile_" + scrabbleTiles[x].char + ".jpg";
+                break;
+            }
         }
 
-    });
-}
-;
-
-
-//deals letter tiles to player
-function Deal() {
-
-    if (FirstDeal === 1)    //if its not the first deal, empty the rack before adding tiles
-        $("#rack").html("");
-
-    //generates 7 random letter tiles for rack
-    letters = "";
-    var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-    //generate random chracters adapted from:
-    //http://stackoverflow.com/questions/1349404/generate-a-string-of-5-random-characters-in-javascript
-
-    for (var i = 0; i < 7; i++)
-        letters += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-
-    //deal letter tiles to the player based on the string generated above
-    for (var j = 0; j < 7; j++)
-        $("#rack").append("<div class='draggable'>"
-                + "<img src='Scrabble_Tiles/Scrabble_Tile_"
-                + letters.charAt(j)
-                + ".jpg' width=50 height=50 alt='"
-                + letters.charAt(j)
-                + "'>"
-                + "</div>");
-
-    //it is no longer the first deal
-    FirstDeal = 1;
-
-    //I dont know why but the drag and drop interface needs to be reimplented entirely after deal
-    DragAndDrop();
-
-    //resets score to zero, because we just dealt and there are no words yet
-    Score = 0;
-
-    //we have to rewrite the score on the page to zero
-    $("#score").html("<p>Score: " + Score + "<p>");
-}
-;
-
-//score the game
-function Scoring(tile, square) {
-
-    var letterscore = 0; //score of our current tile
-    
-
-    for (var i = 0; i < 26; i++) {
-        if (tile === piecesarray[i]) {
-            letterscore = valuesarray[i];
-        }
-    } //find our tile score
-
-    if (square === "doubleletter")
-        letterscore = letterscore * 2;
-
-    Score += letterscore;
-
-    if (square === "tripleword")
-        Score = Score * 3;
-
-    //write the score on the page
-    $("#score").html("<p>Score: " + Score + "<p>");
-}
-;
-
-
-function UnScoring(tile){
-    
-    var letterscore = 0; //score of our current tile
-
-    for (var i = 0; i < 26; i++) {
-        if (tile === piecesarray[i]) {
-            letterscore = valuesarray[i];
-        }
+        //parse the filename for just the one letter character
+        var char = tile.substring(14, 15);
+        $("#tile_rack").append("<img src=Img/" + tile + " alt=" + char + " class='tile' id=" + char + tilesLeft +" />");
     }
-    
-    Score = Score - letterscore ;
-    
-    $("#score").html("<p>Score: " + Score + "<p>");
-
 }
+
+$(document).ready(function ()
+{
+    (function()
+    {
+        generateTiles(7);
+
+        // Do a jQuery Ajax request for the text dictionary
+        $.get( "download/american-english.txt", function( file )
+        {
+            // Get an array of all the words
+            var dict = file.split( "\n" );
+
+            // And add them as properties to the dictionary lookup
+            // This will allow for fast lookups later
+            for ( var i = 0; i < dict.length; i++ )
+            {
+                dictionary[ dict[i].toLowerCase() ] = true;
+            }
+        });
+
+        $("#submit_button").button().click(submit);
+        $(".tile" ).draggable();
+        $(".scrabble_slots").droppable({drop: tileDropped, out: tileRemoved});
+    })();
+});
+//Data structure to keep track of remaining tiles
+var scrabbleTiles = [
+    {char: "A", value : 1,  remaining : 9  }
+    , {char: "B", value : 3,  remaining : 2  }
+    , {char: "C", value : 3,  remaining : 2  }
+    , {char: "D", value : 2,  remaining : 4  }
+    , {char: "E", value : 1,  remaining : 12 }
+    , {char: "F", value : 4,  remaining : 2  }
+    , {char: "G", value : 2,  remaining : 3  }
+    , {char: "H", value : 4,  remaining : 2  }
+    , {char: "I", value : 1,  remaining : 9  }
+    , {char: "J", value : 8,  remaining : 1  }
+    , {char: "K", value : 5,  remaining : 1  }
+    , {char: "L", value : 1,  remaining : 4  }
+    , {char: "M", value : 3,  remaining : 2  }
+    , {char: "N", value : 1,  remaining : 6  }
+    , {char: "O", value : 1,  remaining : 8  }
+    , {char: "P", value : 3,  remaining : 2  }
+    , {char: "Q", value : 10, remaining : 1  }
+    , {char: "R", value : 1,  remaining : 6  }
+    , {char: "S", value : 1,  remaining : 4  }
+    , {char: "T", value : 1,  remaining : 6  }
+    , {char: "U", value : 1,  remaining : 4  }
+    , {char: "V", value : 4,  remaining : 2  }
+    , {char: "W", value : 4,  remaining : 2  }
+    , {char: "X", value : 8,  remaining : 1  }
+    , {char: "Y", value : 4,  remaining : 2  }
+    , {char: "Z", value : 10, remaining : 1  }
+    , {char: "_", value : 0,  remaining : 2  }] ;
