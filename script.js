@@ -22,6 +22,12 @@ var dictionary = {};
 //credit given to Jason Downing in a great post in Piazza https://piazza.com/class/icm9jynacvn5kx?cid=43
 function submit(event)
 {
+         if(!dictionary[$("#word").text().toLowerCase()] == true)
+    {
+        alert("Word is not in dict");
+    }
+    else
+    {
         var numberTilesRemoved = 0;
         score += tempScore;
 
