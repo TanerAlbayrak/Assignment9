@@ -1,3 +1,9 @@
+/* Taner Albayrak
+Taner_albayrak@student.uml.edu
+12/9/15
+GUI I Assignment 9: Scrabble game
+*/
+
 //https://teaching.cs.uml.edu/~heines/91.461/91.461-2015-16f/461-assn/Scrabble_Pieces_AssociativeArray_Jesse.js
 //possible way to store all the tiles, associative array, credit given to Professor Heines.
 
