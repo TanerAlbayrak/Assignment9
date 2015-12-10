@@ -2,3 +2,8 @@
 height: 100px;
 width: 100px;
 }
+
+board {
+  width: 200px;
+  height: 150px;
+}
