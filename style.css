@@ -4,6 +4,11 @@ Taner_albayrak@student.uml.edu
 GUI I Assignment 9: Scrabble game
 */
 
+#heading {
+  text-align: center;
+  color: red;
+}
+
 .tile {
 height: 100px;
 width: 100px;
