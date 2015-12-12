@@ -5,7 +5,9 @@ GUI I Assignment 9: Scrabble game
 */
 
 body {
-  background-image:url("http://images3.alphacoders.com/591/591904.jpg");
+  background-image:url("http://wallino.com/wp-content/uploads/2015/10/istanbul-desktop-backgrounds.jpg");
+  background-repeat-x: no-repeat;
+background-repeat-y: no-repeat;
 }
 h2 {
   text-align: center;
