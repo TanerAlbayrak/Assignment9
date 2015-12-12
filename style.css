@@ -10,6 +10,7 @@ body {
 h2 {
   text-align: center;
   color: red;
+  text-shadow: 5px 5px black;
 }
 
 .tile {
