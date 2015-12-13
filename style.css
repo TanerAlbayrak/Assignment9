@@ -14,6 +14,10 @@ h2 {
   font-size: 100px;
 }
 
+.wordBox {
+  text-align: right;
+}
+
 .tile {
 height: 100px;
 width: 90px;
