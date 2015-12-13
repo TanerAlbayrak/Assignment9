@@ -15,7 +15,7 @@ h2 {
 }
 
 .wordBox {
-  text-align: right;
+  position: absolute;
 }
 
 .tile {
