@@ -99,6 +99,7 @@ function updateScore()
     $("#score").text(roundScore + score);
 }
 
+// http://stackoverflow.com/questions/26746823/jquery-ui-drag-and-drop-snap-to-center
 function tileDropped(event, ui)
 {
     //snaps the tiles into position
