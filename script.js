@@ -38,7 +38,7 @@ function submit(event)
             {
                 $("#" + scrabble_slots_array[i]).remove();
                 scrabble_slots_array[i] = "";
-                //how many tiles were removed
+                
                 numberTilesRemoved++;
             }
         }
@@ -51,7 +51,7 @@ function submit(event)
 }
 
 //Method called after scrabble board changes
-//Updates the UI after changes are made to the board
+
 function updateScrabbleWord()
 {
     var newText = "";
@@ -68,7 +68,7 @@ function updateScrabbleWord()
 }
 function updateScore()
 {
-    //reset score
+    //resets the score
     roundScore = 0;
     var tripleWord = false;
 
@@ -80,7 +80,7 @@ function updateScore()
             for (x = 0; x < scrabbleTiles.length; x++)
             {
                 if (scrabbleTiles[x].char == $("#" + scrabble_slots_array[i]).attr("alt"))
-                    //double letter score
+                    //double the letter score
                     if(i == 6 || i == 8 || i == 21 || i == 23)
                         roundScore += scrabbleTiles[x].value*2;
                     //triple word score
@@ -93,39 +93,32 @@ function updateScore()
                         roundScore += scrabbleTiles[x].value;
             }
     }
-
     if(tripleWord == true)
         roundScore *= 3;
-
-    //update the score
+    //updates the score
     $("#score").text(roundScore + score);
 }
+
 function tileDropped(event, ui)
 {
-
-    //snap tile into position
+    //snaps the tiles into position
     ui.draggable.position(
     {
         my: "center",
         at: "center",
         of: $(this)
     });
-
-    //add tile to board
     scrabble_slots_array[$(this).attr("id")] = ui.draggable.attr("id");
-
     updateScore();
     updateScrabbleWord();
 }
 
 function tileRemoved(event, ui)
 {
-
-    //Make sure the tile removed is the tile that was on the slot
+    // check that the tile removed is the tile that was on the slot
     if(ui.draggable.attr("id") == scrabble_slots_array[$(this).attr("id")])
-        //remove tile from board
+        //remove the tiles from board
         scrabble_slots_array[$(this).attr("id")] = "";
-
     updateScore();
     updateScrabbleWord();
 }
@@ -133,16 +126,15 @@ function tileRemoved(event, ui)
 function generateTiles(numberTiles)
 {
     //Generate seven tiles
-    for(i = 0; i < numberTiles; i++)
+    for (i = 0; i < numberTiles; i++)
     {
-        //randomly choose a tile from the remaining tiles (tiles left)
+        // randomly chooses a tile from the tiles left
         var tileNumber = Math.floor((Math.random() * tilesLeft) + 1);
         var tile;
-
         //convert tile number to an actual tile character
         for (x = 0; x < scrabbleTiles.length; x++)
         {
-            //When the tileNumber becomes less then zero scrabbleTiles[x].char is the character chosen
+            //When the tileNumber becomes less than zero scrabbleTiles[x].char is the character chosen
             tileNumber = tileNumber - scrabbleTiles[x].remaining;
 
             if (tileNumber < 0)
@@ -153,7 +145,6 @@ function generateTiles(numberTiles)
                 break;
             }
         }
-
         //parse the filename for just the one letter character
         var char = tile.substring(14, 15);
         $("#tile_rack").append("<img src=images/" + tile + " alt=" + char + " class='tile' id=" + char + tilesLeft +" />");
